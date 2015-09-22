@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol name="xdg_shell">
+
+  <copyright>
+    Copyright © 2015      Red Hat Inc.
+
+    Permission is hereby granted, free of charge, to any person obtaining a
+    copy of this software and associated documentation files (the "Software"),
+    to deal in the Software without restriction, including without limitation
+    the rights to use, copy, modify, merge, publish, distribute, sublicense,
+    and/or sell copies of the Software, and to permit persons to whom the
+    Software is furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice (including the next
+    paragraph) shall be included in all copies or substantial portions of the
+    Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+    THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+    DEALINGS IN THE SOFTWARE.
+  </copyright>
+
+  <interface name="_xdg_exporter" version="1">
+    <description summary="">
+      Warning! The protocol described in this file is experimental. Each version
+      of this protocol should be considered incompatible with any other version,
+      and a client binding to a version different to the one advertised will be
+      terminated. Once the protocol is declared stable, backward compatibility
+      is guaranteed, the '_' prefix will be removed from the name and the
+      version will be reset to 1.
+    </description>
+
+    <enum name="error">
+      <entry name="version_mismatch" value="0"/>
+    </enum>
+
+    <request name="destroy" type="destructor"/>
+
+    <request name="export">
+      <arg name="id" type="new_id" interface="_xdg_exported"/>
+      <arg name="surface" type="object" interface="xdg_surface"/>
+    </request>
+  </interface>
+
+  <interface name="_xdg_importer" version="1">
+    <description summary="">
+      Warning! The protocol described in this file is experimental. Each version
+      of this protocol should be considered incompatible with any other version,
+      and a client binding to a version different to the one advertised will be
+      terminated. Once the protocol is declared stable, backward compatibility
+      is guaranteed, the '_' prefix will be removed from the name and the
+      version will be reset to 1.
+    </description>
+
+    <enum name="error">
+      <entry name="version_mismatch" value="0"/>
+      <entry name="already_imported" value="1"/>
+    </enum>
+
+    <request name="destroy" type="destructor"/>
+
+    <request name="import">
+      <arg name="id" type="new_id" interface="_xdg_imported"/>
+      <arg name="handle" type="string"/>
+    </request>
+  </interface>
+
+  <interface name="_xdg_exported" version="1">
+    <description summary=""/>
+
+    <request name="destroy" type="destructor"/>
+
+    <event name="handle">
+      <arg name="handle" type="string"/>
+    </event>
+  </interface>
+
+  <interface name="_xdg_imported" version="1">
+    <description summary=""/>
+
+    <request name="destroy" type="destructor"/>
+
+    <request name="set_parent_of">
+      <arg name="surface" type="object" interface="xdg_surface"/>
+    </request>
+
+    <event name="destroyed"/>
+  </interface>
+
+</protocol>
