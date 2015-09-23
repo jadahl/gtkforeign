@@ -23,4 +23,27 @@
 #ifndef GTKFOREIGN_H
 #define GTKFOREIGN_H
 
+#include <gdk/gdk.h>
+
+typedef struct _GtkForeign GtkForeign;
+typedef struct _GtkForeignExported GtkForeignExported;
+typedef struct _GtkForeignHandle GtkForeignHandle;
+
+GtkForeign *         gtk_foreign_new                    (GdkDisplay         *display);
+
+void                 gtk_foreign_free                   (GtkForeign         *foreign);
+
+GtkForeignExported * gtk_foreign_export_window          (GtkForeign         *foreign,
+                                                         GdkWindow          *window);
+
+GtkForeignHandle *   gtk_foreign_exported_get_handle    (GtkForeignExported *exported);
+
+void                 gtk_foreign_exported_destroy       (GtkForeignExported *exported);
+
+GtkForeignHandle *   gtk_foreign_handle_deserialize     (const gchar        *handle_str);
+
+gchar *              gtk_foreign_handle_serialize       (GtkForeignHandle   *handle);
+
+void                 gtk_foreign_handle_free            (GtkForeignHandle   *handle);
+
 #endif /* GTKFOREIGN_H */

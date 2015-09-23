@@ -29,6 +29,15 @@ nodist_libgtkforeign_la_SOURCES =		\
 
 libgtkforeign_la_SOURCES =			\
 	src/gtkforeign.c			\
+	src/gtkforeign-exported.c		\
+	src/gtkforeign-exported.h		\
+	src/gtkforeign-exported-wayland.c	\
+	src/gtkforeign-exported-wayland.h	\
+	src/gtkforeign-impl.c			\
+	src/gtkforeign-impl.h			\
+	src/gtkforeign-impl-wayland.c		\
+	src/gtkforeign-impl-wayland.h		\
+	src/gtkforeign-private.h		\
 	$(NULL)
 
 libgtkforeign_la_CFLAGS = $(AM_CFLAGS) $(GTK_CFLAGS)

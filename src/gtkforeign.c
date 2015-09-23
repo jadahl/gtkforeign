@@ -23,3 +23,80 @@
 #include "config.h"
 
 #include "gtkforeign.h"
+#include "gtkforeign-impl.h"
+#include "gtkforeign-private.h"
+
+struct _GtkForeign
+{
+  GdkDisplay *display;
+  GtkForeignImpl *impl;
+};
+
+struct _GtkForeignHandle
+{
+  gchar *handle_str;
+};
+
+GtkForeign *
+gtk_foreign_new (GdkDisplay *display)
+{
+  GtkForeign *foreign;
+
+  foreign = g_new0 (GtkForeign, 1);
+
+  foreign->display = display;
+  foreign->impl = gtk_foreign_create_impl (foreign);
+
+  return foreign;
+}
+
+void
+gtk_foreign_free (GtkForeign *foreign)
+{
+  g_object_unref (foreign->impl);
+  g_free (foreign);
+}
+
+GtkForeignExported *
+gtk_foreign_export_window (GtkForeign *foreign,
+                           GdkWindow  *window)
+{
+  return gtk_foreign_impl_export_window (foreign->impl, window);
+}
+
+GtkForeignImported *
+gtk_foreign_import_window (GtkForeign       *foreign,
+                           GtkForeignHandle *handle)
+{
+  return gtk_foreign_impl_import_window (foreign->impl, handle);
+}
+
+GdkDisplay *
+gtk_foreign_get_gdk_display (GtkForeign *foreign)
+{
+  return foreign->display;
+}
+
+GtkForeignHandle *
+gtk_foreign_handle_deserialize (const gchar *handle_str)
+{
+  GtkForeignHandle *handle;
+
+  handle = g_new0 (GtkForeignHandle, 1);
+  handle->handle_str = g_strdup (handle_str);
+
+  return handle;
+}
+
+gchar *
+gtk_foreign_handle_serialize (GtkForeignHandle *handle)
+{
+  return g_strdup (handle->handle_str);
+}
+
+void
+gtk_foreign_handle_free (GtkForeignHandle *handle)
+{
+  g_free (handle->handle_str);
+  g_free (handle);
+}
