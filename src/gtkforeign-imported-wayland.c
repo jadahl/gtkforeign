@@ -47,18 +47,23 @@ gtk_foreign_imported_wayland_set_parent_of (GtkForeignImported *imported,
 {
   GtkForeignImportedWayland *imported_wayland =
     GTK_FOREIGN_IMPORTED_WAYLAND (imported);
-  struct xdg_surface *xdg_surface;
+  struct wl_surface *wl_surface;
   
-  xdg_surface = gdk_wayland_window_get_xdg_surface (window);
-
-  if (!xdg_surface)
+  if (gdk_window_get_window_type (window) != GDK_WINDOW_TOPLEVEL)
     {
-      g_warning ("Trying to set imported parent of non-xdg_surface window");
+      g_warning ("Can only be parent of a GDK_WINDOW_TOPLEVEL\n");
+      return;
+    }
+
+  wl_surface = gdk_wayland_window_get_wl_surface (window);
+  if (!wl_surface)
+    {
+      g_warning ("Parent has no wl_surface\n");
       return;
     }
 
   _xdg_imported_set_parent_of (imported_wayland->xdg_imported,
-                               xdg_surface);
+                               wl_surface);
 }
 
 static void

@@ -104,12 +104,21 @@ gtk_foreign_impl_wayland_export_window (GtkForeignImpl *impl,
 {
   GtkForeign *foreign = gtk_foreign_impl_get_foreign (impl);
   GtkForeignImplWayland *impl_wayland = GTK_FOREIGN_IMPL_WAYLAND (impl);
-  struct xdg_surface *xdg_surface;
+  struct wl_surface *wl_surface;
   struct _xdg_exported *xdg_exported;
 
-  xdg_surface = gdk_wayland_window_get_xdg_surface (window);
-  if (!xdg_surface)
-    return NULL;
+  if (gdk_window_get_window_type (window) != GDK_WINDOW_TOPLEVEL)
+    {
+      g_warning ("Can only export GDK_WINDOW_TOPLEVEL\n");
+      return NULL;
+    }
+
+  wl_surface = gdk_wayland_window_get_wl_surface (window);
+  if (!wl_surface)
+    {
+      g_warning ("No wl_surface to export\n");
+      return NULL;
+    }
 
   discover_globals (impl_wayland);
   if (!impl_wayland->xdg_exporter)
@@ -119,7 +128,7 @@ gtk_foreign_impl_wayland_export_window (GtkForeignImpl *impl,
     }
 
   xdg_exported = _xdg_exporter_export (impl_wayland->xdg_exporter,
-                                       xdg_surface);
+                                       wl_surface);
   return gtk_foreign_exported_wayland_new (foreign, xdg_exported);
 }
 

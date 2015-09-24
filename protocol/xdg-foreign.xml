@@ -42,7 +42,7 @@
 
     <request name="export">
       <arg name="id" type="new_id" interface="_xdg_exported"/>
-      <arg name="surface" type="object" interface="xdg_surface"/>
+      <arg name="surface" type="object" interface="wl_surface"/>
     </request>
   </interface>
 
@@ -85,7 +85,7 @@
     <request name="destroy" type="destructor"/>
 
     <request name="set_parent_of">
-      <arg name="surface" type="object" interface="xdg_surface"/>
+      <arg name="surface" type="object" interface="wl_surface"/>
     </request>
 
     <event name="destroyed"/>
