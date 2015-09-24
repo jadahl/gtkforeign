@@ -33,8 +33,8 @@ struct _GtkForeignImportedClass
 {
   GObjectClass parent_class;
 
-  void * (* set_parent_of) (GtkForeignImported *imported,
-                            GdkWindow          *window);
+  void (* set_parent_of) (GtkForeignImported *imported,
+                          GdkWindow          *window);
 };
 
 GtkForeign * gtk_foreign_imported_get_foreign (GtkForeignImported *imported);
