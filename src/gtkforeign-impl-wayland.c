@@ -26,6 +26,7 @@
 
 #include "gtkforeign-exported-wayland.h"
 #include "gtkforeign-impl-wayland.h"
+#include "gtkforeign-imported-wayland.h"
 #include "gtkforeign-private.h"
 #include "xdg-foreign-client-protocol.h"
 
@@ -112,7 +113,10 @@ gtk_foreign_impl_wayland_export_window (GtkForeignImpl *impl,
 
   discover_globals (impl_wayland);
   if (!impl_wayland->xdg_exporter)
-    return NULL;
+    {
+      g_warning ("Wayland server doesn't support exporting\n");
+      return NULL;
+    }
 
   xdg_exported = _xdg_exporter_export (impl_wayland->xdg_exporter,
                                        xdg_surface);
@@ -123,7 +127,24 @@ static GtkForeignImported *
 gtk_foreign_impl_wayland_import_window (GtkForeignImpl   *impl,
                                         GtkForeignHandle *handle)
 {
-  return NULL;
+  GtkForeign *foreign = gtk_foreign_impl_get_foreign (impl);
+  GtkForeignImplWayland *impl_wayland = GTK_FOREIGN_IMPL_WAYLAND (impl);
+  gchar *handle_str;
+  struct _xdg_imported *xdg_imported;
+
+  discover_globals (impl_wayland);
+  if (!impl_wayland->xdg_importer)
+    {
+      g_warning ("Wayland server doesn't support importing\n");
+      return NULL;
+    }
+
+  handle_str = gtk_foreign_handle_serialize (handle);
+  xdg_imported = _xdg_importer_import (impl_wayland->xdg_importer,
+                                       handle_str);
+  g_free (handle_str);
+
+  return gtk_foreign_imported_wayland_new (foreign, xdg_imported);
 }
 
 static void

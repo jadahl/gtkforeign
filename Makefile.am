@@ -37,6 +37,10 @@ libgtkforeign_la_SOURCES =			\
 	src/gtkforeign-impl.h			\
 	src/gtkforeign-impl-wayland.c		\
 	src/gtkforeign-impl-wayland.h		\
+	src/gtkforeign-imported.c		\
+	src/gtkforeign-imported.h		\
+	src/gtkforeign-imported-wayland.c	\
+	src/gtkforeign-imported-wayland.h	\
 	src/gtkforeign-private.h		\
 	$(NULL)
 

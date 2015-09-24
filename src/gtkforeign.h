@@ -27,6 +27,7 @@
 
 typedef struct _GtkForeign GtkForeign;
 typedef struct _GtkForeignExported GtkForeignExported;
+typedef struct _GtkForeignImported GtkForeignImported;
 typedef struct _GtkForeignHandle GtkForeignHandle;
 
 GtkForeign *         gtk_foreign_new                    (GdkDisplay         *display);
@@ -36,9 +37,17 @@ void                 gtk_foreign_free                   (GtkForeign         *for
 GtkForeignExported * gtk_foreign_export_window          (GtkForeign         *foreign,
                                                          GdkWindow          *window);
 
+GtkForeignImported * gtk_foreign_import_window          (GtkForeign         *foreign,
+                                                         GtkForeignHandle   *handle);
+
 GtkForeignHandle *   gtk_foreign_exported_get_handle    (GtkForeignExported *exported);
 
 void                 gtk_foreign_exported_destroy       (GtkForeignExported *exported);
+
+void                 gtk_foreign_imported_set_parent_of (GtkForeignImported *imported,
+                                                         GdkWindow          *window);
+
+void                 gtk_foreign_imported_destroy       (GtkForeignImported *imported);
 
 GtkForeignHandle *   gtk_foreign_handle_deserialize     (const gchar        *handle_str);
 
