@@ -33,12 +33,14 @@ LT_INIT([disable-static])
 
 PKG_PROG_PKG_CONFIG
 
-PKG_CHECK_MODULES(GTK, gtk+-3.0 wayland-server wayland-client)
+PKG_CHECK_MODULES(GTK, gtk+-3.0 wayland-server wayland-client wayland-protocols)
 
 AC_PATH_PROG([WAYLAND_SCANNER],[wayland-scanner],[no])
 AS_IF([test "x$WAYLAND_SCANNER" = "xno"],
   AC_MSG_ERROR([Could not find wayland-scanner in your PATH, required for parsing wayland extension protocols]))
 AC_SUBST([WAYLAND_SCANNER])
+
+AC_SUBST(WAYLAND_PROTOCOLS_DATADIR, `$PKG_CONFIG --variable=pkgdatadir wayland-protocols`)
 
 AC_CONFIG_FILES([
 Makefile

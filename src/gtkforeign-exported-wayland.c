@@ -27,13 +27,14 @@
 #include "gtkforeign-private.h"
 #include "gtkforeign-exported.h"
 #include "gtkforeign-exported-wayland.h"
-#include "xdg-foreign-client-protocol.h"
+
+#include "xdg-foreign-unstable-v1-client-protocol.h"
 
 struct _GtkForeignExportedWayland
 {
   GtkForeignExported parent;
 
-  struct _xdg_exported *xdg_exported;
+  struct zxdg_exported_v1 *xdg_exported;
   GtkForeignHandle *handle;
 };
 
@@ -51,22 +52,22 @@ gtk_foreign_exported_wayland_get_handle (GtkForeignExported *exported)
 }
 
 static void
-gtk_foreign_exported_wayland_handle_handle (void                 *data,
-                                            struct _xdg_exported *_xdg_exported,
-                                            const char           *handle)
+gtk_foreign_exported_wayland_handle_handle (void                    *data,
+                                            struct zxdg_exported_v1 *xdg_exported,
+                                            const char              *handle)
 {
   GtkForeignExportedWayland *exported_wayland = data;
 
   exported_wayland->handle = gtk_foreign_handle_deserialize (handle);
 }
 
-static const struct _xdg_exported_listener gtk_foreign_xdg_exported_listener = {
+static const struct zxdg_exported_v1_listener gtk_foreign_xdg_exported_listener = {
   gtk_foreign_exported_wayland_handle_handle,
 };
 
 GtkForeignExported *
-gtk_foreign_exported_wayland_new (GtkForeign *foreign,
-                                  struct _xdg_exported *xdg_exported)
+gtk_foreign_exported_wayland_new (GtkForeign              *foreign,
+                                  struct zxdg_exported_v1 *xdg_exported)
 {
   GdkDisplay *display;
   GtkForeignExportedWayland *exported_wayland;
@@ -78,9 +79,9 @@ gtk_foreign_exported_wayland_new (GtkForeign *foreign,
   exported_wayland->xdg_exported = xdg_exported;
 
 
-  _xdg_exported_add_listener (xdg_exported,
-                              &gtk_foreign_xdg_exported_listener,
-                              exported_wayland);
+  zxdg_exported_v1_add_listener (xdg_exported,
+                                 &gtk_foreign_xdg_exported_listener,
+                                 exported_wayland);
 
   display = gtk_foreign_get_gdk_display (foreign);
   wl_display = gdk_wayland_display_get_wl_display (display);
@@ -95,7 +96,7 @@ gtk_foreign_exported_wayland_finalize (GObject *gobject)
   GtkForeignExportedWayland *exported_wayland =
     GTK_FOREIGN_EXPORTED_WAYLAND (gobject);
 
-  _xdg_exported_destroy (exported_wayland->xdg_exported);
+  zxdg_exported_v1_destroy (exported_wayland->xdg_exported);
 
   G_OBJECT_CLASS (gtk_foreign_exported_wayland_parent_class)->finalize (gobject);
 }

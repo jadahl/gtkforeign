@@ -27,13 +27,14 @@
 #include "gtkforeign-private.h"
 #include "gtkforeign-imported.h"
 #include "gtkforeign-imported-wayland.h"
-#include "xdg-foreign-client-protocol.h"
+
+#include "xdg-foreign-unstable-v1-client-protocol.h"
 
 struct _GtkForeignImportedWayland
 {
   GtkForeignImported parent;
 
-  struct _xdg_imported *xdg_imported;
+  struct zxdg_imported_v1 *xdg_imported;
   GtkForeignHandle *handle;
 };
 
@@ -62,24 +63,24 @@ gtk_foreign_imported_wayland_set_parent_of (GtkForeignImported *imported,
       return;
     }
 
-  _xdg_imported_set_parent_of (imported_wayland->xdg_imported,
-                               wl_surface);
+  zxdg_imported_v1_set_parent_of (imported_wayland->xdg_imported,
+                                  wl_surface);
 }
 
 static void
-gtk_foreign_imported_wayland_handle_destroyed (void                 *data,
-                                               struct _xdg_imported *_xdg_imported)
+gtk_foreign_imported_wayland_handle_destroyed (void                    *data,
+                                               struct zxdg_imported_v1 *xdg_imported)
 {
   g_warning ("xdg_imported destroyed\n");
 }
 
-static const struct _xdg_imported_listener gtk_foreign_xdg_imported_listener = {
+static const struct zxdg_imported_v1_listener gtk_foreign_xdg_imported_listener = {
   gtk_foreign_imported_wayland_handle_destroyed,
 };
 
 GtkForeignImported *
-gtk_foreign_imported_wayland_new (GtkForeign *foreign,
-                                  struct _xdg_imported *xdg_imported)
+gtk_foreign_imported_wayland_new (GtkForeign              *foreign,
+                                  struct zxdg_imported_v1 *xdg_imported)
 {
   GdkDisplay *display;
   GtkForeignImportedWayland *imported_wayland;
@@ -91,9 +92,9 @@ gtk_foreign_imported_wayland_new (GtkForeign *foreign,
   imported_wayland->xdg_imported = xdg_imported;
 
 
-  _xdg_imported_add_listener (xdg_imported,
-                              &gtk_foreign_xdg_imported_listener,
-                              imported_wayland);
+  zxdg_imported_v1_add_listener (xdg_imported,
+                                 &gtk_foreign_xdg_imported_listener,
+                                 imported_wayland);
 
   display = gtk_foreign_get_gdk_display (foreign);
   wl_display = gdk_wayland_display_get_wl_display (display);
@@ -108,7 +109,7 @@ gtk_foreign_imported_wayland_finalize (GObject *gobject)
   GtkForeignImportedWayland *imported_wayland =
     GTK_FOREIGN_IMPORTED_WAYLAND (gobject);
 
-  _xdg_imported_destroy (imported_wayland->xdg_imported);
+  zxdg_imported_v1_destroy (imported_wayland->xdg_imported);
 
   G_OBJECT_CLASS (gtk_foreign_imported_wayland_parent_class)->finalize (gobject);
 }

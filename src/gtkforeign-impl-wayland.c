@@ -28,14 +28,15 @@
 #include "gtkforeign-impl-wayland.h"
 #include "gtkforeign-imported-wayland.h"
 #include "gtkforeign-private.h"
-#include "xdg-foreign-client-protocol.h"
+
+#include "xdg-foreign-unstable-v1-client-protocol.h"
 
 struct _GtkForeignImplWayland
 {
   GtkForeignImpl parent;
 
-  struct _xdg_exporter *xdg_exporter;
-  struct _xdg_importer *xdg_importer;
+  struct zxdg_exporter_v1 *xdg_exporter;
+  struct zxdg_importer_v1 *xdg_importer;
   gboolean globals_discovered;
 };
 
@@ -51,15 +52,15 @@ registry_handle_global (void               *data,
 {
   GtkForeignImplWayland *impl_wayland = data;
 
-  if (g_str_equal (interface, "_xdg_exporter"))
+  if (g_str_equal (interface, "zxdg_exporter_v1"))
     impl_wayland->xdg_exporter = wl_registry_bind (registry,
                                                    name,
-                                                   &_xdg_exporter_interface,
+                                                   &zxdg_exporter_v1_interface,
                                                    1);
-  else if (g_str_equal (interface, "_xdg_importer"))
+  else if (g_str_equal (interface, "zxdg_importer_v1"))
     impl_wayland->xdg_importer = wl_registry_bind (registry,
                                                    name,
-                                                   &_xdg_importer_interface,
+                                                   &zxdg_importer_v1_interface,
                                                    1);
 }
 
@@ -105,7 +106,7 @@ gtk_foreign_impl_wayland_export_window (GtkForeignImpl *impl,
   GtkForeign *foreign = gtk_foreign_impl_get_foreign (impl);
   GtkForeignImplWayland *impl_wayland = GTK_FOREIGN_IMPL_WAYLAND (impl);
   struct wl_surface *wl_surface;
-  struct _xdg_exported *xdg_exported;
+  struct zxdg_exported_v1 *xdg_exported;
 
   if (gdk_window_get_window_type (window) != GDK_WINDOW_TOPLEVEL)
     {
@@ -127,8 +128,8 @@ gtk_foreign_impl_wayland_export_window (GtkForeignImpl *impl,
       return NULL;
     }
 
-  xdg_exported = _xdg_exporter_export (impl_wayland->xdg_exporter,
-                                       wl_surface);
+  xdg_exported = zxdg_exporter_v1_export (impl_wayland->xdg_exporter,
+                                          wl_surface);
   return gtk_foreign_exported_wayland_new (foreign, xdg_exported);
 }
 
@@ -139,7 +140,7 @@ gtk_foreign_impl_wayland_import_window (GtkForeignImpl   *impl,
   GtkForeign *foreign = gtk_foreign_impl_get_foreign (impl);
   GtkForeignImplWayland *impl_wayland = GTK_FOREIGN_IMPL_WAYLAND (impl);
   gchar *handle_str;
-  struct _xdg_imported *xdg_imported;
+  struct zxdg_imported_v1 *xdg_imported;
 
   discover_globals (impl_wayland);
   if (!impl_wayland->xdg_importer)
@@ -149,8 +150,8 @@ gtk_foreign_impl_wayland_import_window (GtkForeignImpl   *impl,
     }
 
   handle_str = gtk_foreign_handle_serialize (handle);
-  xdg_imported = _xdg_importer_import (impl_wayland->xdg_importer,
-                                       handle_str);
+  xdg_imported = zxdg_importer_v1_import (impl_wayland->xdg_importer,
+                                          handle_str);
   g_free (handle_str);
 
   return gtk_foreign_imported_wayland_new (foreign, xdg_imported);

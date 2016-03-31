@@ -24,7 +24,8 @@
 #define GTKFOREIGN_IMPORTED_WAYLAND_H
 
 #include "gtkforeign-imported.h"
-#include "xdg-foreign-client-protocol.h"
+
+#include "xdg-foreign-unstable-v1-client-protocol.h"
 
 #define GTK_FOREIGN_TYPE_IMPORTED_WAYLAND (gtk_foreign_imported_wayland_get_type ())
 G_DECLARE_FINAL_TYPE (GtkForeignImportedWayland,
@@ -32,7 +33,7 @@ G_DECLARE_FINAL_TYPE (GtkForeignImportedWayland,
                       GTK_FOREIGN, IMPORTED_WAYLAND,
                       GtkForeignImported);
 
-GtkForeignImported * gtk_foreign_imported_wayland_new (GtkForeign           *foreign,
-                                                       struct _xdg_imported *xdg_imported);
+GtkForeignImported * gtk_foreign_imported_wayland_new (GtkForeign              *foreign,
+                                                       struct zxdg_imported_v1 *xdg_imported);
 
 #endif /* GTKFOREIGN_IMPORTED_WAYLAND_H */

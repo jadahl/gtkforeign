@@ -24,7 +24,8 @@
 #define GTKFOREIGN_EXPORTED_WAYLAND_H
 
 #include "gtkforeign-exported.h"
-#include "xdg-foreign-client-protocol.h"
+
+#include "xdg-foreign-unstable-v1-client-protocol.h"
 
 #define GTK_FOREIGN_TYPE_EXPORTED_WAYLAND (gtk_foreign_exported_wayland_get_type ())
 G_DECLARE_FINAL_TYPE (GtkForeignExportedWayland,
@@ -32,7 +33,7 @@ G_DECLARE_FINAL_TYPE (GtkForeignExportedWayland,
                       GTK_FOREIGN, EXPORTED_WAYLAND,
                       GtkForeignExported);
 
-GtkForeignExported * gtk_foreign_exported_wayland_new (GtkForeign           *foreign,
-                                                       struct _xdg_exported *xdg_exported);
+GtkForeignExported * gtk_foreign_exported_wayland_new (GtkForeign              *foreign,
+                                                       struct zxdg_exported_v1 *xdg_exported);
 
 #endif /* GTKFOREIGN_EXPORTED_WAYLAND_H */

@@ -1,13 +1,9 @@
 NULL=
 lib_LTLIBRARIES = libgtkforeign.la
 
-EXTRA_DIST = \
-	protocol/xdg-foreign.xml		\
-	$(NULL)
-
 BUILT_SOURCES =					\
-	src/xdg-foreign-client-protocol.h	\
-	src/xdg-foreign-protocol.c		\
+	src/xdg-foreign-unstable-v1-client-protocol.h	\
+	src/xdg-foreign-unstable-v1-protocol.c		\
 	$(NULL)
 
 DISTCLEANFILES =				\
@@ -44,12 +40,25 @@ libgtkforeign_la_SOURCES =			\
 libgtkforeign_la_CFLAGS = $(AM_CFLAGS) $(GTK_CFLAGS)
 libgtkforeign_la_LIBADD = $(GTK_LIBS)
 
-src/%-protocol.c : $(srcdir)/protocol/%.xml
+.SECONDEXPANSION:
+
+define protostability
+$(shell echo $1 | sed 's/.*\(\<unstable\>\|\<stable\>\).*/\1/')
+endef
+
+define protoname
+$(shell echo $1 | sed 's/\([a-z\-]\+\)-[a-z]\+-v[0-9]\+/\1/')
+endef
+
+%-protocol.c : $(WAYLAND_PROTOCOLS_DATADIR)/$$(call protostability,$$*)/$$(call protoname,$$*)/$$*.xml
 	$(AM_V_GEN)$(WAYLAND_SCANNER) code < $< > $@
 	$(AM_V_GEN)$(SED) -i -e 's/WL_EXPORT //' $@
-
-src/%-client-protocol.h : $(srcdir)/protocol/%.xml
+%-client-protocol.h : $(WAYLAND_PROTOCOLS_DATADIR)/$$(call protostability,$$*)/$$(call protoname,$$*)/$$*.xml
 	$(AM_V_GEN)$(WAYLAND_SCANNER) client-header < $< > $@
+
+%-protocol.c : $(srcdir)/protocol/%.xml
+	$(AM_V_GEN)$(WAYLAND_SCANNER) code < $< > $@
+	$(AM_V_GEN)$(SED) -i -e 's/WL_EXPORT //' $@
 
 noinst_PROGRAMS =				\
 	gtkforeign-exporter			\
