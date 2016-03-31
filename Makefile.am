@@ -3,14 +3,11 @@ lib_LTLIBRARIES = libgtkforeign.la
 
 EXTRA_DIST = \
 	protocol/xdg-foreign.xml		\
-	protocol/xdg-shell.xml			\
 	$(NULL)
 
 BUILT_SOURCES =					\
 	src/xdg-foreign-client-protocol.h	\
 	src/xdg-foreign-protocol.c		\
-	src/xdg-shell-client-protocol.h		\
-	src/xdg-shell-protocol.c		\
 	$(NULL)
 
 DISTCLEANFILES =				\
